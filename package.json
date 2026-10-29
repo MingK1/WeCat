@@ -1,0 +1,44 @@
+{
+  "name": "wecat",
+  "version": "0.2.2",
+  "private": true,
+  "description": "A local-first WeChat relationship analysis and long-term memory archive",
+  "author": "WeCat contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MingK1/WeCat.git"
+  },
+  "homepage": "https://github.com/MingK1/WeCat",
+  "main": "./out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "start": "electron-vite preview",
+    "postinstall": "install-electron && electron-builder install-app-deps",
+    "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
+    "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
+    "typecheck": "npm run typecheck:node && npm run typecheck:web",
+    "build": "npm run typecheck && electron-vite build",
+    "build:win": "npm run build && electron-builder --win --x64"
+  },
+  "dependencies": {
+    "@electron-toolkit/preload": "3.0.2",
+    "@electron-toolkit/utils": "4.0.0",
+    "echarts": "6.1.0",
+    "lucide-react": "1.63.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "weflow-cli": "1.21.4"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react-swc": "4.3.3",
+    "electron": "45.1.0",
+    "electron-builder": "26.18.0",
+    "electron-vite": "6.0.0",
+    "typescript": "^5.9.3",
+    "vite": "8.3.5"
+  }
+}

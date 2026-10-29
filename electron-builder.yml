@@ -1,0 +1,41 @@
+appId: com.wecat.archive
+productName: WeCat
+copyright: Copyright (c) 2026 WeCat contributors
+
+directories:
+  output: release
+
+files:
+  - out/**
+  - package.json
+
+asar: true
+asarUnpack:
+  - node_modules/**
+extraResources:
+  - from: resources/icon.png
+    to: icon.png
+  - from: resources/export_voice_assets.py
+    to: wecat-scripts/export_voice_assets.py
+  - from: resources/export_contacts.py
+    to: wecat-scripts/export_contacts.py
+
+win:
+  executableName: WeCat
+  icon: resources/icon.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+  artifactName: WeCat-${version}-Setup.${ext}
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  perMachine: false
+  deleteAppDataOnUninstall: false
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: WeCat
+
+publish: null

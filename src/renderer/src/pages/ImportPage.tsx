@@ -11,6 +11,7 @@ export function ImportPage({ onImported }: Props): React.JSX.Element {
   const [progress, setProgress] = useState<ImportProgress>()
   const [busy, setBusy] = useState(false)
   const [pollingFor, setPollingFor] = useState<'database' | 'audio'>()
+  const [includeMedia, setIncludeMedia] = useState(false)
   const [message, setMessage] = useState('')
 
   const inspect = async (path: string): Promise<void> => {
@@ -77,8 +78,12 @@ export function ImportPage({ onImported }: Props): React.JSX.Element {
   const startImport = async (): Promise<void> => {
     setBusy(true); setMessage(''); setProgress(undefined)
     try {
-      const result = await window.wecat.importer.start({ sourcePath, includeMedia: true })
-      setMessage(result.message)
+      const result = await window.wecat.importer.start({ sourcePath, includeMedia })
+      const warnings = result.run?.warnings ?? []
+      const warningSummary = warnings.length
+        ? `\n\n导入说明（${warnings.length} 项）：\n${warnings.slice(0, 5).map((warning) => `- ${warning}`).join('\n')}${warnings.length > 5 ? `\n- 另有 ${warnings.length - 5} 项` : ''}`
+        : ''
+      setMessage(`${result.message}${warningSummary}`)
       if (result.success) {
         setBusy(false)
         setProgress(undefined)
@@ -113,9 +118,10 @@ export function ImportPage({ onImported }: Props): React.JSX.Element {
         {pollingFor && <p className="polling-note"><LoaderCircle className="spin" size={15} />正在等待外部终端完成，状态会自动刷新，无需手动点击检查。</p>}
       </section>
       <section className="panel">
-        <div className="panel-heading"><div><h2>3. 建立或更新档案</h2><p>导入消息、文件索引与可用媒体，失败时保留上一次完整档案</p></div>{busy ? <LoaderCircle className="spin" size={20} /> : <Database size={20} />}</div>
+        <div className="panel-heading"><div><h2>3. 建立或更新档案</h2><p>先可靠保存全部聊天记录；导入完成前其它页面仍显示上一次完整档案</p></div>{busy ? <LoaderCircle className="spin" size={20} /> : <Database size={20} />}</div>
+        <label className="import-media-option"><input type="checkbox" checked={includeMedia} disabled={busy} onChange={(event) => setIncludeMedia(event.target.checked)} /><span><strong>同时整理可用媒体</strong><small>会明显增加耗时和磁盘占用；超过 10,000 条消息的超大会话会自动优先保存聊天，跳过高内存媒体扫描。</small></span></label>
         {progress && <div className="progress-block"><div><strong>{progress.detail}</strong><span>{percent}%</span></div><span className="progress-track"><i style={{ width: `${percent}%` }} /></span><small>{progress.completed.toLocaleString('zh-CN')} / {progress.total.toLocaleString('zh-CN')}</small></div>}
-        <div className="import-actions"><button className="button primary" disabled={!inspection?.valid || !dependencies?.ready || busy} onClick={() => void startImport()}>{busy ? <LoaderCircle className="spin" size={17} /> : <Database size={17} />}{busy ? '正在导入' : '导入全部会话'}</button>{busy && <button className="button danger" onClick={() => void window.wecat.importer.cancel()}>取消导入</button>}</div>
+        <div className="import-actions"><button className="button primary" disabled={!inspection?.valid || !dependencies?.ready || busy} onClick={() => void startImport()}>{busy ? <LoaderCircle className="spin" size={17} /> : <Database size={17} />}{busy ? '正在导入' : includeMedia ? '导入聊天与媒体' : '优先导入聊天记录'}</button>{busy && <button className="button danger" onClick={() => void window.wecat.importer.cancel()}>取消导入</button>}</div>
         {message && <div className="inline-notice">{message}</div>}
       </section>
     </div>

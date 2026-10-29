@@ -164,7 +164,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .report-controls .grow { flex: 1 1 240px; }
 .report-preview { height: min(72vh, 820px); min-height: 560px; overflow: hidden; border: 1px solid var(--line); background: #fff; }
 .report-preview iframe { width: 100%; height: 100%; border: 0; }
-.inline-notice { padding: 13px 15px; border-left: 3px solid var(--blue); background: var(--blue-soft); color: #385d67; font-size: 12px; line-height: 1.55; }
+.inline-notice { padding: 13px 15px; border-left: 3px solid var(--blue); background: var(--blue-soft); color: #385d67; font-size: 12px; line-height: 1.55; white-space: pre-wrap; }
 
 .empty-state { display: flex; width: min(100%, 520px); min-height: 300px; flex-direction: column; align-items: center; justify-content: center; margin: 20px auto; padding: 40px; border: 1px dashed #c8cec7; color: #748074; text-align: center; }
 .empty-state h2 { margin: 20px 0 8px; color: var(--ink); font-size: 20px; }
@@ -196,6 +196,11 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .progress-track { display: block; height: 8px; overflow: hidden; background: #e2e5e0; }
 .progress-track i { display: block; height: 100%; background: var(--green-mid); transition: width .2s ease; }
 .import-actions { display: flex; gap: 9px; }
+.import-media-option { display: flex; align-items: flex-start; gap: 10px; margin: 0 0 18px; padding: 13px 14px; border: 1px solid var(--line); background: #f8faf7; cursor: pointer; }
+.import-media-option input { width: 16px; height: 16px; margin: 1px 0 0; accent-color: #07c160; }
+.import-media-option > span { display: flex; min-width: 0; flex-direction: column; }
+.import-media-option strong { font-size: 12px; }
+.import-media-option small { margin-top: 4px; color: var(--muted); font-size: 10px; line-height: 1.55; }
 .import-actions + .inline-notice { margin-top: 15px; }
 .spin { animation: spin 1s linear infinite; }
 .muted { color: var(--muted); }

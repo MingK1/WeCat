@@ -21,6 +21,9 @@ export async function runProcess(
   args: string[],
   options: ProcessRunOptions = {}
 ): Promise<ProcessRunResult> {
+  if (options.signal?.aborted) {
+    return { code: 1, stdout: '', stderr: '', aborted: true }
+  }
   return new Promise((resolveRun, rejectRun) => {
     const child = spawn(executable, args, {
       cwd: options.cwd,

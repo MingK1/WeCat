@@ -307,15 +307,20 @@ export class WeflowAdapter {
   }
 
   async exportVoiceAssets(talker: string, outputDirectory: string, signal?: AbortSignal): Promise<Map<string, { path: string; bytes: number }>> {
-    if (!existsSync(this.pythonExecutable())) return new Map()
+    if (!existsSync(this.pythonExecutable())) throw new Error('语音解码器尚未准备。')
     const result = await runProcess(this.pythonExecutable(), [this.voiceScriptPath()], {
       cwd: this.workingDirectory,
       signal,
       timeoutMs: 120_000,
       env: { ...this.runtimeEnvironment(), WECAT_WEFLOW_ROOT: dirname(this.cliPath), WEFLOW_TALKER: talker, WECAT_VOICE_OUTPUT: outputDirectory, PYTHONIOENCODING: 'utf-8' }
     })
-    if (result.code !== 0) return new Map()
+    if (result.aborted) throw new Error('语音解码已取消或超时。')
+    if (result.code !== 0) {
+      const payload = result.stdout ? parseJsonOutput<VoiceAssetResult>(result.stdout) : undefined
+      throw new Error(payload?.error || sanitizedProcessMessage(result.stderr) || '语音解码失败。')
+    }
     const payload = parseJsonOutput<VoiceAssetResult>(result.stdout)
+    if (payload.success === false) throw new Error(payload.error || '语音解码失败。')
     return new Map((payload.items ?? []).map((item) => [String(item.localId), { path: item.path, bytes: item.bytes }]))
   }
 }
